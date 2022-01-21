@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { createBook } from '../store/bookSlice';
 
 const AddBook = () => {
+  const dispatch = useDispatch();
   const [values, setValues] = useState({
     title: '',
     author_name: '',
@@ -14,9 +14,6 @@ const AddBook = () => {
   });
   const { title, author_name, total_pages, rating, publisher_name, published_date } =
     values;
-  const params = useParams();
-  console.log('params', params.id);
-  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -25,6 +22,20 @@ const AddBook = () => {
     e.preventDefault();
     dispatch(createBook(values));
   };
+  const { bookStatus } = useSelector((state) => state.book);
+  const clearForm = () => {
+    setValues({
+      title: '',
+      author_name: '',
+      total_pages: '',
+      rating: '',
+      publisher_name: '',
+      published_date: '',
+    });
+  };
+  useEffect(() => {
+    if (bookStatus.create === 'succeded') clearForm();
+  }, [bookStatus.create]);
 
   return (
     <div>

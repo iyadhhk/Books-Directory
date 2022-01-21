@@ -131,8 +131,8 @@ export const bookSlice = createSlice({
     [createBook.fulfilled]: (state, action) => {
       return {
         ...state,
-        bookStatus: { ...state.bookStatus, createBook: 'succeded' },
-        bookErrors: { ...state.bookErrors, createBook: null },
+        bookStatus: { ...state.bookStatus, create: 'succeded' },
+        bookErrors: { ...state.bookErrors, create: null },
         currentBook: action.payload,
       };
     },
@@ -191,5 +191,4 @@ export const bookSlice = createSlice({
   },
 });
 
-// export const { increment, decrement, incrementByAmount } = bookSlice.actions;
 export default bookSlice.reducer;

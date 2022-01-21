@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { deleteBook } from '../store/bookSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteBook, getBookList } from '../store/bookSlice';
 
 const Book = ({ book }) => {
   const dispatch = useDispatch();
+  const { bookStatus } = useSelector((state) => state.book);
+  useEffect(() => {
+    bookStatus.delete === 'succeded' && dispatch(getBookList());
+  }, [bookStatus]);
   const handleDelete = (id) => {
     dispatch(deleteBook(id));
   };
@@ -22,11 +26,7 @@ const Book = ({ book }) => {
             Edit
           </Link>
 
-          <Link
-            className='btn btn-dark btn-sm'
-            to={`/books-list/${book._id}`}
-            // key={book._id}
-          >
+          <Link className='btn btn-dark btn-sm' to={`/books-list/${book._id}`}>
             Details
           </Link>
 

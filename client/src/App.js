@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
-import { Link, Routes, Route, Outlet, Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getBookList } from './store/bookSlice';
+import { Link, Routes, Route, Navigate } from 'react-router-dom';
+
 import AddBook from './components/AddBook';
 import EditBook from './components/EditBook';
 import Books from './components/Books';

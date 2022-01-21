@@ -1,4 +1,5 @@
 const Book = require('../models/book');
+const validateBook = require('../utils/validateBook');
 
 // get the list of books
 exports.getAllBooks = async (req, res, next) => {
@@ -6,7 +7,7 @@ exports.getAllBooks = async (req, res, next) => {
     const books = await Book.find();
     res.status(200).json(books);
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
@@ -18,17 +19,23 @@ exports.getBookById = async (req, res, next) => {
 
     res.status(200).json(book);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
 //create new book
 exports.createBook = async (req, res, next) => {
-  const { title, author_name, total_pages, rating, publisher_name, published_date } =
-    req.body;
-  // const { error } = validateBook(req.body);
-  // if (error) return res.status(400).send(error.details[0].message);
   try {
+    const { title, author_name, total_pages, rating, publisher_name, published_date } =
+      req.body;
+    const { error } = validateBook(req.body);
+    if (error) {
+      console.log(error);
+      const err = new Error('validation failed');
+      err.statusCode = 400;
+      err.data = error.details.map((err) => err.message);
+      throw err;
+    }
     const newBook = new Book({
       title,
       author_name,
@@ -43,14 +50,13 @@ exports.createBook = async (req, res, next) => {
       bookId: result._id,
     });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
 // update a book
 exports.editBook = async (req, res, next) => {
   try {
-    // const book = books.find((b) => b.id === parseInt(req.params.id));
     const {
       id,
       title,
@@ -60,6 +66,14 @@ exports.editBook = async (req, res, next) => {
       publisher_name,
       published_date,
     } = req.body;
+    const { error } = validateBook(req.body);
+    if (error) {
+      console.log(error);
+      const err = new Error('validation failed');
+      err.statusCode = 400;
+      err.data = error.details.map((err) => err.message);
+      throw err;
+    }
     const book = await Book.findByIdAndUpdate(
       id,
       {
@@ -76,19 +90,13 @@ exports.editBook = async (req, res, next) => {
     );
     if (!book) return res.status(404).send('The book with the given ID was not found');
 
-    // const { error } = validateBook(req.body);
-    // if (error) return res.status(400).send(error.details[0].message);
-
-    res.send(book);
+    res.status(201).json({
+      message: 'Book updated',
+      book,
+    });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
-};
-const validateBook = (book) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-  });
-  return schema.validate({ name: book.name });
 };
 
 // delete a book
@@ -96,7 +104,8 @@ exports.deleteBook = async (req, res, next) => {
   try {
     const book = await Book.findByIdAndDelete(req.params.id);
     if (!book) return res.status(404).send('The book with the given ID was not found');
-
-    res.send(book);
-  } catch (error) {}
+    res.status(200).json(book);
+  } catch (error) {
+    next(error);
+  }
 };

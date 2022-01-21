@@ -5,6 +5,7 @@ import { editBook } from '../store/bookSlice';
 
 const EditBook = () => {
   const location = useLocation();
+  const params = useParams();
   const { book } = location.state;
 
   const [values, setValues] = useState({
@@ -17,8 +18,7 @@ const EditBook = () => {
   });
   const { title, author_name, total_pages, rating, publisher_name, published_date } =
     values;
-  const params = useParams();
-  console.log('params', params.id);
+
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
