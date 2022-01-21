@@ -1,0 +1,7 @@
+{
+  "name": "MY express App - Development",
+  "mail": {
+    "host": "dev-mail-server"
+  },
+  "mongoURI": "mongodb://localhost/directory"
+}
